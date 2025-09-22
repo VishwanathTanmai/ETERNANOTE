@@ -2,7 +2,7 @@
   "name": "eternanote-frontend",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://yourusername.github.io/eternanote",
+  "homepage": "https://vishwanath.github.io/eternanote",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
