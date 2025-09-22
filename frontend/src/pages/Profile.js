@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { User, Shield, Heart, Users, Award, Settings, Key, Clock, Upload, Save, Plus, X, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { profileService } from '../services/api';
+import { profileService, authService } from '../services/api';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
@@ -11,8 +11,8 @@ const Profile = () => {
   const [profileData, setProfileData] = useState({
     username: user?.username || '',
     email: user?.email || '',
-    bio: '',
-    profileImage: null
+    bio: user?.bio || '',
+    profileImage: user?.avatar || null
   });
   const [trustedContacts, setTrustedContacts] = useState([]);
   const [badges, setBadges] = useState([]);
@@ -66,14 +66,14 @@ const Profile = () => {
         profileService.getEmotionalJourney({ timeframe: 365 })
       ]);
 
-      setProfileData(profileRes.data || { username: user?.username || '', email: user?.email || '', bio: '' });
+      setProfileData(profileRes.data || { username: user?.username || '', email: user?.email || '', bio: user?.bio || '' });
       setTrustedContacts(contactsRes.data.contacts || []);
       setBadges(badgesRes.data.badges || []);
       setEmotionalJourney(journeyRes.data.journey || []);
       setLegacyMode(profileRes.data.legacyMode || false);
     } catch (error) {
       // Silent error handling - use default data
-      setProfileData({ username: user?.username || '', email: user?.email || '', bio: '' });
+      setProfileData({ username: user?.username || '', email: user?.email || '', bio: user?.bio || '' });
       setTrustedContacts([]);
       setBadges([]);
       setEmotionalJourney([]);
@@ -85,7 +85,7 @@ const Profile = () => {
 
   const handleProfileUpdate = async () => {
     try {
-      await profileService.updateProfile(profileData);
+      await authService.updateProfile(profileData);
       toast.success('Profile updated successfully!');
     } catch (error) {
       // Show success even on error to maintain UX

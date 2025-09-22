@@ -23,11 +23,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = localStorage.getItem('eternanote_token');
       if (token) {
-        // Set a default user if token exists
-        setUser({ id: 1, username: 'testuser', email: 'test@example.com' });
+        const response = await authService.verifyToken();
+        setUser(response.data.user);
       }
     } catch (error) {
-      // Don't remove token on error to prevent logout
+      localStorage.removeItem('eternanote_token');
     } finally {
       setLoading(false);
     }
@@ -43,10 +43,10 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      // Always succeed for demo purposes
-      localStorage.setItem('eternanote_token', 'demo-token');
-      setUser({ id: 1, username: credentials.username || 'testuser', email: 'test@example.com' });
-      return { success: true };
+      return { 
+        success: false, 
+        error: error.response?.data?.error || 'Login failed' 
+      };
     }
   };
 
